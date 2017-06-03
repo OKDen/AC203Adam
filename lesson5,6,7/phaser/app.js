@@ -37,7 +37,7 @@ function create(){
 		player.animations.add('right', [5, 6, 7, 8], 10, true);
 		game.physics.arcade.enable(player);
 		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 100;
+		player.body.gravity.y = -0.1;
 		player.body.collideWorldBounds = true;
 
 	enemy1 = game.add.sprite(760, 20, 'baddie');
@@ -117,7 +117,7 @@ function update(){
 
 	// aloow player to jump if touching the ground
 	if(cursors.up.isDown && player.body.touching.down){
-		player.body.velocity.y = -300;
+		player.body.velocity.y = -1;
 	}
 	//enemy movement
 	if(enemy1.x > 759){
