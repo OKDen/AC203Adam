@@ -7,9 +7,9 @@ var life = 3;
 function preload(){
 	game.load.image('sky', 'assets/sky.png');
 	game.load.image('ground', 'assets/platform.png');
-	game.load.image('star', 'assets/star.png')
-	game.load.spritesheet('dude', 'assets/dude.png', 32, 48)
-	game.load.spritesheet('bad_dude', 'assets/baddie.png', 32, 32)
+	game.load.image('star', 'assets/star.png');
+	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+	game.load.spritesheet('bad_dude', 'assets/baddie.png', 32, 32);
 
 
 }
@@ -23,7 +23,7 @@ function create(){
 	platforms.enableBody = true;
 	// Ground
 	var ground = platforms.create(0, 550, 'ground');
-	ground.scale.setTo(2, 2)
+	ground.scale.setTo(2, 2);
 	ground.body.immovable = true;
 	// Ledges
 	var ledge = platforms.create(400, 400, 'ground');
@@ -33,8 +33,8 @@ function create(){
 	// Creating da PLAYA
 	player = game.add.sprite(32, 400, 'dude',);
 		// animating da PLAYA
-		player.animations.add('left', [0, 1, 2, 3], 10, true)
-		player.animations.add('right', [5, 6, 7, 8], 10, true)
+		player.animations.add('left', [0, 1, 2, 3], 10, true);
+		player.animations.add('right', [5, 6, 7, 8], 10, true);
 		game.physics.arcade.enable(player);
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 300;
@@ -99,17 +99,17 @@ function update(){
 	game.physics.arcade.collide(enemy2, platforms);
 
 	// reset payers speed before stuff happens
-	player.body.velocity.x = 0
+	player.body.velocity.x = 0;
 
 	// player movement
 	if(cursors.left.isDown){
 		//move left
 		player.body.velocity.x = -150;
-		player.animations.play('left')
+		player.animations.play('left');
 	}else if(cursors.right.isDown){
 		//move right
 		player.body.velocity.x = 150;
-		player.animations.play('right')
+		player.animations.play('right');
 	}else {
 		player.animations.stop();
 		player.frame = 4;
@@ -117,27 +117,27 @@ function update(){
 
 	// aloow player to jump if touching the ground
 	if(cursors.up.isDown && player.body.touching.down){
-		player.body.velocity.y = -300
+		player.body.velocity.y = -300;
 	}
 	//enemy movement
 	if(enemy1.x > 759){
 		enemy1.animations.play('left');
-		enemy1.body.velocity.x = -1700;
+		enemy1.body.velocity.x = -340;
 	}else if(enemy1.x < 405){
 		enemy1.animations.play('right');
-		enemy1.body.velocity.x = 1700;
+		enemy1.body.velocity.x = 340;
 	}
 
 	if(enemy2.x > 200){
 		enemy2.animations.play('left');
-		enemy2.body.velocity.x = -1700;
+		enemy2.body.velocity.x = -200;
 	}else if(enemy2.x < 21){
 		enemy2.animations.play('right');
-		enemy2.body.velocity.x = 1700;
+		enemy2.body.velocity.x = 200;
 	}
 
 //collide stars with platfroms
-game.physics.arcade.collide(stars, platforms)
+game.physics.arcade.collide(stars, platforms);
 game.physics.arcade.overlap(player, stars, collectStar, null, this);
 game.physics.arcade.overlap(player, enemy1, loseLifeLeft, null, this);
 game.physics.arcade.overlap(player, enemy2, loseLife, null, this);
