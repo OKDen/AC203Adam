@@ -121,19 +121,19 @@ function update(){
 	}
 	//enemy movement
 	if(enemy1.x > 759){
-		enemy.animations.play('left');
-		enemy.body.velocity.x = -1700;
+		enemy1.animations.play('left');
+		enemy1.body.velocity.x = -1700;
 	}else if(enemy1.x < 405){
-		enemy.animations.play('right');
-		enemy.body.velocity.x = 1700;
+		enemy1.animations.play('right');
+		enemy1.body.velocity.x = 1700;
 	}
 
 	if(enemy2.x > 200){
-		enemy.animations.play('left');
-		enemy.body.velocity.x = -1700;
+		enemy2.animations.play('left');
+		enemy2.body.velocity.x = -1700;
 	}else if(enemy2.x < 21){
-		enemy.animations.play('right');
-		enemy.body.velocity.x = 1700;
+		enemy2.animations.play('right');
+		enemy2.body.velocity.x = 1700;
 	}
 
 //collide stars with platfroms
