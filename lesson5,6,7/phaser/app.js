@@ -10,6 +10,8 @@ function preload(){
 	game.load.image('star', 'assets/star.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 	game.load.spritesheet('baddie', 'assets/baddie.png', 32, 32);
+	//V2
+	game.load.image('health', 'assets/firstaid.png');
 
 
 }
@@ -67,6 +69,11 @@ function create(){
 		var star = stars.create(i * 70, 0, 'star');
 		star.body.gravity.y= 200;
 		star.body.bounce.y = 0.7 + Math.random() * 0.2;
+	//V2
+	healths = game.add.physicsGroup();
+	healths.enableBody = true;
+
+
 	//text style
 	var style = {font: "bold 25px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
 	//positioning the score
@@ -89,6 +96,10 @@ function create(){
 	lifelabel.setTextBounds(0,0,800,100);
 	lifetext.setTextBounds(0,0,800,100);
 
+	goText = game.add.text(0,0,'',style);
+	goText.setShadow(3,3,'rgba(0,0,0,0.5)');
+	gotext.setTextBounds(100,200,800,100);
+	goText.visible = false;
 	}
 }
 
@@ -142,6 +153,14 @@ game.physics.arcade.overlap(player, stars, collectStar, null, this);
 game.physics.arcade.overlap(player, enemy1, loseLifeLeft, null, this);
 game.physics.arcade.overlap(player, enemy2, loseLife, null, this);
 }
+//V2
+game.physics.arcade.collide(healths, platforms);
+game.physics.arcade.overlap(player, healths, collectHealth, null, this);
+
+//V2 check if there arent any lives
+if(life < 0){
+	endGame();
+};
 
 // define collectStar function
 function collectStar(player, star){
@@ -158,6 +177,14 @@ function collectStar(player, star){
 	star.body.bounce.y = 0.7 + Math.random() * 0.2;
 }
 
+//v2
+if(score % 10 == 0){
+	health = healths.create(Math.floor(Math.random()*750),0,'health');
+	health.body.gravity.y = 200;
+}
+
+
+
 // define loseLife
 function loseLife(player, enemy){
 	life -= 1;
@@ -173,6 +200,43 @@ function loseLifeLeft(player, enemy){
 	//remove enemy
 	enemy.kill();
 	enemy.reset(10, 20);
+
+
+function collectHealth(player,health){
+life += 1
+lifetext.setText(life);
+health.kill();
+}
+
+function endGame(){
+	player.kill();
+	goText.text = "GAME OVER! \n You scored " + score + "\n Press Enter to start again...";
+	goText.visible = true;
+	scorelabel.visible = false;
+	scoretext.visible = false;
+	lifelabel.visible = false;
+	lifetext.visible = false;
+
+	// restart when enter is clicked
+	var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+	restartButton.onDown.addOnce(restartGame);
+}
+
+
+
+function restartGame(){
+	score = 0;
+	life = 3;
+	player.reset(32, 400);
+	lifetext.setText(life);
+	scoretext.setText(32, 400);
+	goText.visible = false;
+	scorelabel.visible = true;
+	scoretext.visible = true;
+	lifelabel.visible = true;
+	lifetext.visible = true;
+
+
 }
 
 
@@ -182,16 +246,4 @@ function loseLifeLeft(player, enemy){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
