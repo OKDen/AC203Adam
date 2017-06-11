@@ -169,7 +169,6 @@ function update(){
 
   if(life < 0){
     endGame();
-  }
 
 }
 
