@@ -256,9 +256,6 @@ function endGame(){
 
   var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
   restartButton.onDown.addOnce(restartGame);
-
-
-}
 }
 function restartGame(){
   player.reset(32,400);
