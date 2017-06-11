@@ -196,10 +196,6 @@ function update(){
     endGame();
   }
 
-  
-
-}
-
 //define collectStar function
 function collectStar(player,star){
 	//remove the star
