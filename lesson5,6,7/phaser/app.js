@@ -7,12 +7,10 @@ var life = 3;
 function preload(){
   game.load.image('sky', 'assets/sky.png');
   game.load.image('ground', 'assets/platform.png');
-  game.load.image('platform','assets/platform2.png');
+  game.load.image('platform','assets/platform.png');
   game.load.image('star', 'assets/star.png');
   game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
   game.load.spritesheet('baddie', 'assets/baddie.png', 32, 32);
-
-  game.load.image('bullet', 'assets/ball.png')
 }
 
 function create(){
@@ -63,15 +61,6 @@ function create(){
     enemy2.body.gravity.y = 500;
     enemy2.body.collideWorldBounds = false;
 
-  enemy3 = game.add.sprite(780, 20, 'baddie');
-    // Animate the enemy3
-    enemy3.animations.add('left', [0,1], 10, true);
-    enemy3.animations.add('right', [2,3], 10, true);
-    game.physics.arcade.enable(enemy3);
-    enemy3.body.bounce.y = 0.2;
-    enemy3.body.gravity.y = 500;
-    enemy3.body.collideWorldBounds = false;
-
   // Create keyboard entries
   cursors = game.input.keyboard.createCursorKeys();
   space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -86,17 +75,8 @@ function create(){
     star.body.gravity.y = 200;
     star.body.bounce.y = 0.7 + Math.random() * 0.2;
   }
-
-  //create bullets
-  bullets = game.add.physicsGroup();
-  bullets.enableBody = true;
-  //bullets.physicsBodyType = Phaser.Physics.ARCADE;
-  //bullets.scale.setTo(0.25, 0.25);
-  bullets.createMultiple(20, 'bullet');
-  bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', resetBullet);
-  bullets.setAll('checkWorldBounds', true);
-
-
+	
+	
   //set text style
   var style = {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
   //positioning the score
@@ -128,23 +108,12 @@ function create(){
 }
 
 function update(){
-
-  if (ledge1.body.velocity.x > 0 && ledge1.x >= 800)
-            {
-                ledge1.x = -160;
-                enemy1.x = -140;
-            }
-
-  if (ledge2.body.velocity.x > 0 && ledge2.x >= 800)
-            {
-                ledge2.x = -160;
-                enemy2.x = -140;
-            }
+	
 	//collide player and enemies with platforms
 	game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(enemy1, platforms);
 	game.physics.arcade.collide(enemy2, platforms);
-	game.physics.arcade.collide(enemy3, platforms);
+	
 
 
   var standing = player.body.blocked.down || player.body.touching.down;
@@ -171,9 +140,6 @@ function update(){
 		player.body.velocity.y = -300;
 	}
 
-  //shoot
-  if(space.justDown){
-    fireBullet();
   }
 
 
@@ -192,28 +158,18 @@ function update(){
 		enemy2.animations.play('right');
 		enemy2.body.velocity.x = 80;
 	}
-	if(enemy3.x > 759){
-		enemy3.animations.play('left');
-		enemy3.body.velocity.x = -80;
-	}else if(enemy3.x < 30){
-		enemy3.animations.play('right');
-		enemy3.body.velocity.x = 80;
-	}
+	
 
 	//collide stars with platform
 	game.physics.arcade.collide(stars, platforms);
 	game.physics.arcade.overlap(player, stars, collectStar, null, this);
 	game.physics.arcade.overlap(player, enemy1, loseLife, null, this);
 	game.physics.arcade.overlap(player, enemy2, loseLifeLeft, null, this);
-	game.physics.arcade.overlap(player, enemy3, loseLife, null, this);
+	
 
   if(life < 0){
     endGame();
   }
-
-  game.physics.arcade.overlap(enemy1, bullets, resetEnemy, null, this);
-  game.physics.arcade.overlap(enemy2, bullets, resetEnemyLeft, null, this);
-  game.physics.arcade.overlap(enemy3, bullets, resetEnemy, null, this);
 
 }
 
@@ -229,7 +185,7 @@ function collectStar(player,star){
 	//create new star
 	star = stars.create(Math.floor(Math.random()*750),0,'star');
 	star.body.gravity.y = 200;
-    star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    	star.body.bounce.y = 0.7 + Math.random() * 0.2;
 }
 
 //define loseLife
@@ -238,18 +194,18 @@ function loseLife(player, enemy){
 	life -= 1;
 	lifetext.setText(life);
 
-  //if(life >= 0){
+  if(life >= 0){
 	//remove and respawn enemy
 	enemy.kill();
 	enemy.reset(ledge2.x, 20);
-  // } else{
-  //   player.kill()
-  //   goText.text="GAME OVER! \n You scored " + score //\nPress Enter to try again...";
-  //   goText.visible = true;
+   } else{
+     	player.kill()
+     	goText.text="GAME OVER! \n You scored " + score //\nPress Enter to try again...";
+     	goText.visible = true;
 
-  //     //var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-  //     //restartButton.onDown.addOnce(restartGame);
-  // }
+        var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+  	restartButton.onDown.addOnce(restartGame);
+   }
 }
 
 //define loseLifeLeft
@@ -265,7 +221,7 @@ function loseLifeLeft(player, enemy){
 
 function endGame(){
   player.kill();
-  goText.text="GAME OVER! \n You scored " + score + "\nPress Enter to try again...";
+  goText.text="GAME OVER! \n You scored " + score + "\n Press Enter to try again...";
   goText.visible = true;
   // enemy1.kill();
   // enemy2.kill();
@@ -277,46 +233,6 @@ function endGame(){
 
   var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
   restartButton.onDown.addOnce(restartGame);
-
-}
-
-function resetBullet(bullet) {
-  // Destroy the laser
-  bullet.kill();
-}
-
-function fireBullet() {
-  // Get the first laser that's inactive, by passing 'false' as a parameter
-  var bullet = bullets.getFirstExists(false);
-  if (bullet && cursors.left.isDown) {
-    // If we have a laser, set it to the starting position
-    bullet.reset(player.x, player.y + 15);
-    // Give it a velocity of -500 so it starts shooting
-    bullet.body.velocity.x = -300;
-  }
-  else if (bullet && cursors.right.isDown) {
-    // If we have a laser, set it to the starting position
-    bullet.reset(player.x, player.y + 15);
-    // Give it a velocity of -500 so it starts shooting
-    bullet.body.velocity.x = 300;
-  }
- 
-}
-
-function resetEnemyLeft(enemy, bullet){
-  bullet.kill();
-  //remove and respawn enemy
-  enemy.kill();
-  enemy.reset(ledge1.x, 20);
-
-  
-}
-
-function resetEnemy(enemy, bullet){
-  bullet.kill();
-  //remove and respawn enemy
-  enemy.kill();
-  enemy.reset(ledge2.x, 20);
 
 }
 
