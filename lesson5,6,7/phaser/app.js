@@ -61,6 +61,15 @@ function create(){
     enemy2.body.gravity.y = 500;
     enemy2.body.collideWorldBounds = false;
 
+  enemy3 = game.add.sprite(780, 20, 'baddie');
+    // Animate the enemy3
+    enemy3.animations.add('left', [0,1], 10, true);
+    enemy3.animations.add('right', [2,3], 10, true);
+    game.physics.arcade.enable(enemy3);
+    enemy3.body.bounce.y = 0.2;
+    enemy3.body.gravity.y = 500;
+    enemy3.body.collideWorldBounds = false;
+
   // Create keyboard entries
   cursors = game.input.keyboard.createCursorKeys();
   space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -75,8 +84,8 @@ function create(){
     star.body.gravity.y = 200;
     star.body.bounce.y = 0.7 + Math.random() * 0.2;
   }
-	
-	
+
+
   //set text style
   var style = {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
   //positioning the score
@@ -101,19 +110,30 @@ function create(){
   goText = game.add.text(0,0,' ',style);
   goText.setShadow(3,3,'rgba(0,0,0,0.5)',2)
   goText.setTextBounds(0,200,800,100)
-  //goText.anchor.setTo(0.5, 0.5);
-  //goText.font = 'Press Start 2P';
+  goText.anchor.setTo(0.5, 0.5);
+  goText.font = 'Press Start 2P';
   goText.visible = false;
-  //goText.fixedToCamera = true;
+  goText.fixedToCamera = true;
 }
 
 function update(){
-	
+
+  if (ledge1.body.velocity.x > 0 && ledge1.x >= 800)
+            {
+                ledge1.x = -160;
+                enemy1.x = -140;
+            }
+
+  if (ledge2.body.velocity.x > 0 && ledge2.x >= 800)
+            {
+                ledge2.x = -160;
+                enemy2.x = -140;
+            }
 	//collide player and enemies with platforms
 	game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(enemy1, platforms);
 	game.physics.arcade.collide(enemy2, platforms);
-	
+	game.physics.arcade.collide(enemy3, platforms);
 
 
   var standing = player.body.blocked.down || player.body.touching.down;
@@ -139,7 +159,6 @@ function update(){
 	if(cursors.up.isDown && player.body.touching.down){
 		player.body.velocity.y = -300;
 	}
-
   }
 
 
@@ -158,17 +177,26 @@ function update(){
 		enemy2.animations.play('right');
 		enemy2.body.velocity.x = 80;
 	}
-	
+	if(enemy3.x > 759){
+		enemy3.animations.play('left');
+		enemy3.body.velocity.x = -80;
+	}else if(enemy3.x < 30){
+		enemy3.animations.play('right');
+		enemy3.body.velocity.x = 80;
+	}
 
 	//collide stars with platform
 	game.physics.arcade.collide(stars, platforms);
 	game.physics.arcade.overlap(player, stars, collectStar, null, this);
 	game.physics.arcade.overlap(player, enemy1, loseLife, null, this);
 	game.physics.arcade.overlap(player, enemy2, loseLifeLeft, null, this);
-	
+	game.physics.arcade.overlap(player, enemy3, loseLife, null, this);
 
   if(life < 0){
     endGame();
+  }
+
+  
 
 }
 
@@ -184,7 +212,7 @@ function collectStar(player,star){
 	//create new star
 	star = stars.create(Math.floor(Math.random()*750),0,'star');
 	star.body.gravity.y = 200;
-    	star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    star.body.bounce.y = 0.7 + Math.random() * 0.2;
 }
 
 //define loseLife
@@ -198,12 +226,12 @@ function loseLife(player, enemy){
 	enemy.kill();
 	enemy.reset(ledge2.x, 20);
    } else{
-     	player.kill()
-     	goText.text="GAME OVER! \n You scored " + score //\nPress Enter to try again...";
-     	goText.visible = true;
+     player.kill()
+     goText.text="GAME OVER! \n You scored " + score //\nPress Enter to try again...";
+     goText.visible = true;
 
-        var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-  	restartButton.onDown.addOnce(restartGame);
+       var restartButton = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+       restartButton.onDown.addOnce(restartGame);
    }
 }
 
@@ -220,11 +248,11 @@ function loseLifeLeft(player, enemy){
 
 function endGame(){
   player.kill();
-  goText.text="GAME OVER! \n You scored " + score + "\n Press Enter to try again...";
+  goText.text="GAME OVER! \n You scored " + score + "\nPress Enter to try again...";
   goText.visible = true;
-  // enemy1.kill();
-  // enemy2.kill();
-  // enemy3.kill();
+   enemy1.kill();
+   enemy2.kill();
+   enemy3.kill();
   scorelabel.visible = false;
   scoretext.visible = false;
   lifelabel.visible = false;
@@ -234,8 +262,8 @@ function endGame(){
   restartButton.onDown.addOnce(restartGame);
 
 }
-
-
+}
+}
 function restartGame(){
   player.reset(32,400);
   life = 3;
